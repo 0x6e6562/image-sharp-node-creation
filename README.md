@@ -1,3 +1,3 @@
 # ImageSharp Node Creation
 
-This is is POC to create Gatsby ImageSharp nodes from dynamically created nodes.
+This is a Hello World POC to create Gatsby ImageSharp nodes from dynamically created nodes.
