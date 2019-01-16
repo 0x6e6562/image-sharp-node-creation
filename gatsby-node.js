@@ -1,8 +1,9 @@
 const crypto = require('crypto');
+const { fluid } = require(`gatsby-plugin-sharp`);
 
 var cache = {};
 
-exports.onCreateNode = async ({node, getNode, actions, createNodeId }) => {
+exports.onCreateNode = async ({node, getNode, reporter, cache, actions, createNodeId }) => {
 
   // Cache each FS path so that we can resolve against the contents from the YAML data
   // This is for demo purposes only, in production you would need something more robust
@@ -11,15 +12,22 @@ exports.onCreateNode = async ({node, getNode, actions, createNodeId }) => {
   if (node.internal.owner === 'gatsby-transformer-yaml') {
     const { feature } = node;
     const { image } = feature;
-    const { createNode, createParentChildLink, createNodeField } = actions;
+    const { createNode } = actions;
 
     const sourceNodeId = cache[image];
     const imageSourceNode = getNode(sourceNodeId);
 
     const contentDigest = crypto.createHash('md5').update(JSON.stringify(feature)).digest('hex');
 
+    const fluidImage = await fluid({
+      file: imageSourceNode,
+      reporter,
+      cache,
+    });
+
     const resourceNode = {
       ...feature,
+      fluid: fluidImage,
       id: createNodeId(`${node.id} >>> Feature`),
       children: [],
       parent: node.id,
@@ -29,25 +37,6 @@ exports.onCreateNode = async ({node, getNode, actions, createNodeId }) => {
       },
     };
 
-    createNodeField({
-      node,
-      name: 'hard_coded_image_name',
-      value: image,
-    });
-
-    // const imageNode = {
-    //   id: createNodeId(`${image} >> ImageSharp`),
-    //   children: [],
-    //   parent: imageSourceNode.id,
-    //   internal: {
-    //     contentDigest: imageSourceNode.internal.contentDigest,
-    //     type: `ImageSharp`,
-    //   },
-    // }
-
     createNode(resourceNode);
-    //createNode(imageNode);
-
-    //createParentChildLink({ parent: node, child: imageNode })
   }
 }

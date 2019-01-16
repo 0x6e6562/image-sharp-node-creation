@@ -3,10 +3,10 @@ import { graphql } from 'gatsby';
 
 export default ({ data }) =>
   <div>
-    {data.allFeature.edges.map(({node: { id, description, image }}) => (
+    {data.allFeature.edges.map(({node: { id, description, fluid: { src } }}) => (
       <div key={id}>
         <h1>{description}</h1>
-        <div>Image reference: {image}</div>
+        <img src={src} />
       </div>
     ))}
   </div>
@@ -19,7 +19,9 @@ export const query = graphql`
         node {
           id
           description
-          image
+          fluid {
+            src
+          }
         }
       }
     }
