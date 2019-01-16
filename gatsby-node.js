@@ -11,7 +11,7 @@ exports.onCreateNode = async ({node, getNode, actions, createNodeId }) => {
   if (node.internal.owner === 'gatsby-transformer-yaml') {
     const { feature } = node;
     const { image } = feature;
-    const { createNode, createParentChildLink } = actions;
+    const { createNode, createParentChildLink, createNodeField } = actions;
 
     const sourceNodeId = cache[image];
     const imageSourceNode = getNode(sourceNodeId);
@@ -29,19 +29,25 @@ exports.onCreateNode = async ({node, getNode, actions, createNodeId }) => {
       },
     };
 
-    const imageNode = {
-      id: createNodeId(`${image} >> ImageSharp`),
-      children: [],
-      parent: imageSourceNode.id,
-      internal: {
-        contentDigest: imageSourceNode.internal.contentDigest,
-        type: `ImageSharp`,
-      },
-    }
+    createNodeField({
+      node,
+      name: 'hard_coded_image_name',
+      value: image,
+    });
+
+    // const imageNode = {
+    //   id: createNodeId(`${image} >> ImageSharp`),
+    //   children: [],
+    //   parent: imageSourceNode.id,
+    //   internal: {
+    //     contentDigest: imageSourceNode.internal.contentDigest,
+    //     type: `ImageSharp`,
+    //   },
+    // }
 
     createNode(resourceNode);
-    createNode(imageNode);
+    //createNode(imageNode);
 
-    createParentChildLink({ parent: node, child: imageNode })
+    //createParentChildLink({ parent: node, child: imageNode })
   }
 }
