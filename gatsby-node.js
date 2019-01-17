@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { fluid } = require(`gatsby-plugin-sharp`);
+const { fluid, resolutions, traceSVG } = require(`gatsby-plugin-sharp`);
 
 var cache = {};
 

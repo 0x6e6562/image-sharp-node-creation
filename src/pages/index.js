@@ -1,12 +1,15 @@
 import React from 'react';
 import { graphql } from 'gatsby';
+import Img from 'gatsby-image';
+
 
 export default ({ data }) =>
   <div>
-    {data.allFeature.edges.map(({node: { id, description, fluid: { src } }}) => (
+    {data.allFeature.edges.map(({node: { id, description, fluid }}) => (
       <div key={id}>
         <h1>{description}</h1>
-        <img src={src} />
+        <img src={fluid.src} />
+        <Img style={{width: 300}} fluid={fluid}/>
       </div>
     ))}
   </div>
@@ -20,7 +23,11 @@ export const query = graphql`
           id
           description
           fluid {
+            base64
+            aspectRatio
             src
+            srcSet
+            sizes
           }
         }
       }
